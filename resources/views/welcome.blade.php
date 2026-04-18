@@ -32,10 +32,10 @@
                     <section class="text-center max-w-4xl">
                         <x-badge variant="info">Attendance Management</x-badge>
                         <h2 class="mt-6 max-w-3xl font-display text-5xl font-semibold leading-tight text-slate-900 sm:text-6xl mx-auto">
-                            Sistem absensi kegiatan kreatif yang cepat, aman, dan mudah dipantau.
+                            Sistem Absensi Kegiatan Polinela Creative Team
                         </h2>
                         <p class="mt-6 max-w-2xl text-lg leading-8 text-slate-600 mx-auto">
-                            Admin dapat mengelola anggota, kegiatan, kode absensi aktif 15 menit, monitoring data hadir, dan ekspor rekap PDF. Anggota cukup login, lihat kegiatan, masukkan kode, dan pantau riwayat lengkap dengan timestamp presisi.
+                            Sistem Pendataan Kegiatan dan Monitoring Kinerja Anggota Polinela Creative
                         </p>
 
                         <div class="mt-8 flex flex-wrap justify-center gap-4">
