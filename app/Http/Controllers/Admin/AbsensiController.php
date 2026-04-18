@@ -1,0 +1,134 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use App\Models\Absensi;
+use App\Models\Kegiatan;
+use App\Models\User;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
+
+class AbsensiController extends Controller
+{
+    public function index(Request $request): View
+    {
+        $filters = [
+            'kegiatan_id' => $request->integer('kegiatan_id'),
+            'user_id' => $request->integer('user_id'),
+            'tanggal' => (string) $request->string('tanggal'),
+        ];
+
+        $absensi = Absensi::query()
+            ->with(['user.anggota', 'kegiatan'])
+            ->when($filters['kegiatan_id'] > 0, fn ($query) => $query->where('kegiatan_id', $filters['kegiatan_id']))
+            ->when($filters['user_id'] > 0, fn ($query) => $query->where('user_id', $filters['user_id']))
+            ->when($filters['tanggal'] !== '', function ($query) use ($filters) {
+                $query->whereHas('kegiatan', function ($kegiatanQuery) use ($filters) {
+                    $kegiatanQuery->whereDate('tanggal', $filters['tanggal']);
+                });
+            })
+            ->latest('waktu_absen')
+            ->paginate(12)
+            ->withQueryString();
+
+        return view('admin.absensi.index', [
+            'absensi' => $absensi,
+            'anggotaList' => User::query()->where('role', User::ROLE_ANGGOTA)->with('anggota')->orderBy('name')->get(),
+            'kegiatanList' => Kegiatan::query()->orderByDesc('tanggal')->get(),
+            'filters' => $filters,
+        ]);
+    }
+
+    public function create(): View
+    {
+        return view('admin.absensi.create', $this->formData());
+    }
+
+    public function store(Request $request): RedirectResponse
+    {
+        $validated = $this->validatePayload($request);
+        Absensi::query()->create($validated);
+
+        return redirect()
+            ->route('admin.absensi.index')
+            ->with('success', 'Absensi manual berhasil ditambahkan.');
+    }
+
+    public function edit(Absensi $absensi): View
+    {
+        return view('admin.absensi.edit', array_merge($this->formData(), [
+            'absensiItem' => $absensi->load(['user.anggota', 'kegiatan']),
+        ]));
+    }
+
+    public function update(Request $request, Absensi $absensi): RedirectResponse
+    {
+        $validated = $this->validatePayload($request, $absensi);
+        $absensi->update($validated);
+
+        return redirect()
+            ->route('admin.absensi.index')
+            ->with('success', 'Data absensi berhasil diperbarui.');
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function formData(): array
+    {
+        return [
+            'anggotaList' => User::query()
+                ->where('role', User::ROLE_ANGGOTA)
+                ->with('anggota')
+                ->orderBy('name')
+                ->get(),
+            'kegiatanList' => Kegiatan::query()->orderByDesc('tanggal')->get(),
+            'statusOptions' => [
+                Absensi::STATUS_HADIR,
+                Absensi::STATUS_IZIN,
+                Absensi::STATUS_ALFA,
+            ],
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function validatePayload(Request $request, ?Absensi $absensi = null): array
+    {
+        $validator = Validator::make($request->all(), [
+            'user_id' => [
+                'required',
+                Rule::exists('users', 'id')->where('role', User::ROLE_ANGGOTA),
+            ],
+            'kegiatan_id' => ['required', 'exists:kegiatan,id'],
+            'status' => ['required', Rule::in([
+                Absensi::STATUS_HADIR,
+                Absensi::STATUS_IZIN,
+                Absensi::STATUS_ALFA,
+            ])],
+            'waktu_absen' => ['nullable', 'date'],
+        ]);
+
+        $validator->after(function ($validator) use ($request, $absensi) {
+            $exists = Absensi::query()
+                ->where('user_id', $request->input('user_id'))
+                ->where('kegiatan_id', $request->input('kegiatan_id'))
+                ->when($absensi, fn ($query) => $query->where('id', '!=', $absensi->id))
+                ->exists();
+
+            if ($exists) {
+                $validator->errors()->add('user_id', 'Anggota ini sudah memiliki data absensi untuk kegiatan yang dipilih.');
+            }
+        });
+
+        $validated = $validator->validate();
+        $validated['waktu_absen'] = $validated['waktu_absen'] ?? now();
+
+        return $validated;
+    }
+}
