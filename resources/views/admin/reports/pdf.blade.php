@@ -128,7 +128,7 @@
                     <tr>
                         <td>{{ $item->user->name }}</td>
                         <td>{{ $item->kegiatan->nama_kegiatan }} ({{ $item->kegiatan->tanggal->format('d M Y') }})</td>
-                        <td>{{ strtoupper($item->status) }}</td>
+                        <td>{{ str($item->status)->replace('_', ' ')->title() }}</td>
                         <td>{{ $item->waktu_absen->format('d M Y H:i:s') }}</td>
                     </tr>
                 @empty

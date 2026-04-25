@@ -1,8 +1,8 @@
 <x-app-layout>
     <x-slot name="header">
         <div>
-            <p class="text-sm font-medium text-slate-500">Anggota Panel</p>
-            <h2 class="font-display text-3xl font-semibold text-slate-900">Riwayat Absensi</h2>
+
+            <h2 class="font-display text-xl font-semibold text-slate-900">Riwayat Absensi</h2>
         </div>
     </x-slot>
 
@@ -10,7 +10,7 @@
         <section class="section-card">
             <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                 <div>
-                    <h3 class="font-display text-2xl font-semibold text-slate-900">Periode Riwayat</h3>
+                    <h3 class="font-display text-xl font-semibold text-slate-900">Periode Riwayat</h3>
                     <p class="mt-2 text-sm text-slate-500">Tinjau kehadiran Anda dalam 1, 3, atau 6 bulan terakhir.</p>
                 </div>
                 <div class="flex flex-wrap gap-3">
@@ -50,11 +50,12 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($history as $item)
+                            @forelse ($history as $item)
                             @php
                                 $statusClass = match ($item['status']) {
                                     'hadir' => 'badge-success',
                                     'izin' => 'badge-warning',
+                                    'tidak_ditugaskan', 'belum_absen' => 'badge-neutral',
                                     'alfa' => 'badge-danger',
                                     default => 'badge-neutral',
                                 };
@@ -62,7 +63,7 @@
                             <tr>
                                 <td class="font-semibold text-slate-900">{{ $item['kegiatan']->nama_kegiatan }}</td>
                                 <td>{{ $item['kegiatan']->tanggal->format('d M Y') }}</td>
-                                <td><span class="badge {{ $statusClass }}">{{ strtoupper($item['status']) }}</span></td>
+                                <td><span class="badge {{ $statusClass }}">{{ str($item['status'])->replace('_', ' ')->title() }}</span></td>
                                 <td>{{ $item['waktu_absen'] ? $item['waktu_absen']->format('d M Y H:i:s') : '-' }}</td>
                             </tr>
                         @empty

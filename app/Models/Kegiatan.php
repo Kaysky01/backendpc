@@ -4,9 +4,10 @@ namespace App\Models;
 
 use Database\Factories\KegiatanFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Model;
 
 class Kegiatan extends Model
 {
@@ -48,5 +49,11 @@ class Kegiatan extends Model
     public function latestCode(): HasOne
     {
         return $this->hasOne(KodeAbsensi::class)->latestOfMany();
+    }
+
+    public function assignedUsers(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'kegiatan_anggota')
+            ->withTimestamps();
     }
 }

@@ -1,10 +1,12 @@
 <?php
 
+use App\Http\Controllers\Admin\AbsensiController as AdminAbsensiController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\AnggotaController as AdminAnggotaController;
-use App\Http\Controllers\Admin\AbsensiController as AdminAbsensiController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\ImportController;
 use App\Http\Controllers\Admin\KegiatanController as AdminKegiatanController;
+use App\Http\Controllers\Admin\KegiatanDetailController;
 use App\Http\Controllers\Admin\KodeAbsensiController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Anggota\AttendanceCodeController;
@@ -49,7 +51,9 @@ Route::prefix('admin')
                 ]);
         });
 
+        Route::post('anggota/import', [ImportController::class, 'importAnggota'])->name('anggota.import');
         Route::resource('kegiatan', AdminKegiatanController::class)->except('show');
+        Route::get('kegiatan/{kegiatan}', [KegiatanDetailController::class, 'show'])->name('kegiatan.show');
 
         Route::get('kode-absensi', [KodeAbsensiController::class, 'index'])->name('kode-absensi.index');
         Route::post('kegiatan/{kegiatan}/kode-absensi', [KodeAbsensiController::class, 'store'])->name('kode-absensi.store');
@@ -58,6 +62,7 @@ Route::prefix('admin')
         Route::get('absensi', [AdminAbsensiController::class, 'index'])->name('absensi.index');
         Route::get('absensi/create', [AdminAbsensiController::class, 'create'])->name('absensi.create');
         Route::post('absensi', [AdminAbsensiController::class, 'store'])->name('absensi.store');
+        Route::post('absensi/import', [ImportController::class, 'importAbsensi'])->name('absensi.import');
         Route::get('absensi/{absensi}/edit', [AdminAbsensiController::class, 'edit'])->name('absensi.edit');
         Route::put('absensi/{absensi}', [AdminAbsensiController::class, 'update'])->name('absensi.update');
 
@@ -71,6 +76,7 @@ Route::prefix('anggota')
     ->group(function () {
         Route::get('/dashboard', [AnggotaDashboardController::class, 'index'])->name('dashboard');
         Route::get('/kegiatan', [AnggotaKegiatanController::class, 'index'])->name('kegiatan.index');
+        Route::get('/kegiatan/{kegiatan}', [AnggotaKegiatanController::class, 'show'])->name('kegiatan.show');
         Route::get('/absensi/kode', [AttendanceCodeController::class, 'create'])->name('absensi.create');
         Route::post('/absensi/kode', [AttendanceCodeController::class, 'store'])->name('absensi.store');
         Route::get('/riwayat', [AttendanceHistoryController::class, 'index'])->name('riwayat.index');

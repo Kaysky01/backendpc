@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -29,6 +30,8 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'divisi',
+        'role_detail',
         'is_super_admin',
     ];
 
@@ -64,6 +67,17 @@ class User extends Authenticatable
     public function absensis(): HasMany
     {
         return $this->hasMany(Absensi::class);
+    }
+
+    public function assignedKegiatan(): BelongsToMany
+    {
+        return $this->belongsToMany(Kegiatan::class, 'kegiatan_anggota')
+            ->withTimestamps();
+    }
+
+    public function activityLogs(): HasMany
+    {
+        return $this->hasMany(ActivityLog::class);
     }
 
     public function isAdmin(): bool

@@ -5,18 +5,21 @@ namespace App\Http\Controllers\Anggota;
 use App\Http\Controllers\Controller;
 use App\Models\Absensi;
 use App\Models\KodeAbsensi;
+use App\Services\AttendanceStatusService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class AttendanceCodeController extends Controller
 {
-    public function create(): View
+    public function create(Request $request): View
     {
-        return view('anggota.absensi.create');
+        return view('anggota.absensi.create', [
+            'prefilledCode' => strtoupper(trim((string) $request->string('kode'))),
+        ]);
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request, AttendanceStatusService $attendanceStatusService): RedirectResponse
     {
         $validated = $request->validate([
             'kode' => ['required', 'string', 'size:6', 'regex:/^[A-Za-z0-9]{6}$/'],
@@ -29,25 +32,30 @@ class AttendanceCodeController extends Controller
             ->first();
 
         if (! $kodeAbsensi) {
-            return back()->withErrors(['kode' => 'Kode absensi tidak ditemukan.'])->withInput();
+            return back()->with('error', 'Kode tidak valid')->withInput();
         }
 
         if (! $kodeAbsensi->is_active) {
-            return back()->withErrors(['kode' => 'Kode absensi ini sedang tidak aktif.'])->withInput();
+            return back()->with('error', 'Kode tidak valid')->withInput();
         }
 
         if ($kodeAbsensi->isExpired()) {
-            return back()->withErrors(['kode' => 'Kode absensi sudah kedaluwarsa.'])->withInput();
+            return back()->with('error', 'Kode expired')->withInput();
         }
 
         $user = $request->user();
+
+        if (! $attendanceStatusService->canAttend($user, $kodeAbsensi->kegiatan->loadMissing('assignedUsers'))) {
+            return back()->with('error', 'Tidak ditugaskan')->withInput();
+        }
+
         $alreadyExists = Absensi::query()
             ->where('user_id', $user->id)
             ->where('kegiatan_id', $kodeAbsensi->kegiatan_id)
             ->exists();
 
         if ($alreadyExists) {
-            return back()->withErrors(['kode' => 'Anda sudah melakukan absensi untuk kegiatan ini.'])->withInput();
+            return back()->with('error', 'Sudah absen')->withInput();
         }
 
         Absensi::query()->create([
@@ -59,6 +67,6 @@ class AttendanceCodeController extends Controller
 
         return redirect()
             ->route('anggota.riwayat.index')
-            ->with('success', "Absensi untuk kegiatan {$kodeAbsensi->kegiatan->nama_kegiatan} berhasil disimpan.");
+            ->with('success', 'Absensi berhasil');
     }
 }

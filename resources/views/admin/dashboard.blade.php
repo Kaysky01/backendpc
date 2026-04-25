@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <div>
-            <p class="text-sm font-medium text-slate-500">Admin Panel</p>
+            
             <h2 class="font-display text-3xl font-semibold text-slate-900">Dashboard Kehadiran</h2>
         </div>
     </x-slot>
@@ -75,11 +75,12 @@
                 </div>
 
                 <div class="mt-6 space-y-4">
-                    @forelse ($recent_absensi as $item)
+                        @forelse ($recent_absensi as $item)
                         @php
                             $statusClass = match ($item->status) {
                                 'hadir' => 'badge-success',
                                 'izin' => 'badge-warning',
+                                'tidak_ditugaskan' => 'badge-neutral',
                                 default => 'badge-danger',
                             };
                         @endphp
@@ -91,7 +92,7 @@
                                         {{ $item->kegiatan->nama_kegiatan }} • {{ $item->kegiatan->tanggal->format('d M Y') }}
                                     </p>
                                 </div>
-                                <span class="badge {{ $statusClass }}">{{ strtoupper($item->status) }}</span>
+                                <span class="badge {{ $statusClass }}">{{ str($item->status)->replace('_', ' ')->title() }}</span>
                             </div>
                             <p class="mt-3 text-sm text-slate-600">
                                 Waktu absen: {{ $item->waktu_absen->format('d M Y H:i:s') }}

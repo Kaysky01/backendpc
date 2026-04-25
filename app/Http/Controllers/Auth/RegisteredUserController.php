@@ -33,6 +33,7 @@ class RegisteredUserController extends Controller
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'divisi' => ['nullable', 'string', 'max:255'],
             'npm' => ['required', 'string', 'max:30', 'unique:anggota,npm'],
             'prodi' => ['required', 'string', 'max:255'],
             'angkatan' => ['required', 'string', 'max:10'],
@@ -45,6 +46,7 @@ class RegisteredUserController extends Controller
                 'email' => $request->email,
                 'password' => $request->password,
                 'role' => User::ROLE_ANGGOTA,
+                'divisi' => $request->divisi,
             ]);
 
             $user->anggota()->create([

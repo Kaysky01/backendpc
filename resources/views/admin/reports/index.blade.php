@@ -101,11 +101,12 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($report['records'] as $item)
+                            @forelse ($report['records'] as $item)
                             @php
                                 $statusClass = match ($item->status) {
                                     'hadir' => 'badge-success',
                                     'izin' => 'badge-warning',
+                                    'tidak_ditugaskan' => 'badge-neutral',
                                     default => 'badge-danger',
                                 };
                             @endphp
@@ -118,7 +119,7 @@
                                     <p class="font-semibold text-slate-900">{{ $item->kegiatan->nama_kegiatan }}</p>
                                     <p class="mt-1 text-sm text-slate-500">{{ $item->kegiatan->tanggal->format('d M Y') }}</p>
                                 </td>
-                                <td><span class="badge {{ $statusClass }}">{{ strtoupper($item->status) }}</span></td>
+                                <td><span class="badge {{ $statusClass }}">{{ str($item->status)->replace('_', ' ')->title() }}</span></td>
                                 <td>{{ $item->waktu_absen->format('d M Y H:i:s') }}</td>
                             </tr>
                         @empty

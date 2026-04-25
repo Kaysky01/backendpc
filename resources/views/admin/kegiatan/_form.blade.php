@@ -1,3 +1,9 @@
+@php
+    $selectedAssignedUserIds = collect(old('assigned_user_ids', $kegiatan?->assignedUsers?->pluck('id')->all() ?? []))
+        ->map(fn ($id) => (int) $id)
+        ->all();
+@endphp
+
 <div class="grid gap-5 md:grid-cols-2">
     <div class="md:col-span-2">
         <x-input-label for="nama_kegiatan" value="Nama Kegiatan" />
@@ -21,6 +27,20 @@
         <x-input-label for="deskripsi" value="Deskripsi" />
         <textarea id="deskripsi" name="deskripsi" rows="5" class="form-control">{{ old('deskripsi', $kegiatan?->deskripsi) }}</textarea>
         <x-input-error :messages="$errors->get('deskripsi')" class="mt-2" />
+    </div>
+
+    <div class="md:col-span-2">
+        <x-input-label for="assigned_user_ids" value="Anggota Ditugaskan" />
+        <select id="assigned_user_ids" name="assigned_user_ids[]" class="form-control" multiple size="8">
+            @foreach ($anggotaList as $item)
+                <option value="{{ $item->id }}" @selected(in_array($item->id, $selectedAssignedUserIds, true))>
+                    {{ $item->name }}{{ $item->divisi ? ' - '.$item->divisi : '' }}
+                </option>
+            @endforeach
+        </select>
+        <p class="mt-2 text-xs text-slate-500">Pilih anggota yang ditugaskan. Anggota lain tetap dapat melihat kegiatan, tetapi statusnya menjadi tidak ditugaskan.</p>
+        <x-input-error :messages="$errors->get('assigned_user_ids')" class="mt-2" />
+        <x-input-error :messages="$errors->get('assigned_user_ids.*')" class="mt-2" />
     </div>
 </div>
 

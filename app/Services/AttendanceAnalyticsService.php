@@ -6,7 +6,9 @@ use App\Models\Absensi;
 use App\Models\Kegiatan;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 class AttendanceAnalyticsService
 {
@@ -18,7 +20,7 @@ class AttendanceAnalyticsService
      *     attendance_percentage:float,
      *     chart_labels:array<int, string>,
      *     chart_values:array<int, int>,
-     *     recent_absensi:\Illuminate\Support\Collection<int, \App\Models\Absensi>
+     *     recent_absensi:Collection<int, Absensi>
      * }
      */
     public function adminDashboardData(int $months = 6): array
@@ -51,24 +53,21 @@ class AttendanceAnalyticsService
      */
     public function memberStats(User $user, ?Carbon $fromDate = null): array
     {
-        $kegiatan = Kegiatan::query()
-            ->when($fromDate, fn ($query) => $query->whereDate('tanggal', '>=', $fromDate->toDateString()))
-            ->orderBy('tanggal')
-            ->get(['id', 'tanggal']);
+        $assignedKegiatan = $user->assignedKegiatan()
+            ->when($fromDate, fn (Builder $query) => $query->whereDate('kegiatan.tanggal', '>=', $fromDate->toDateString()))
+            ->orderBy('kegiatan.tanggal')
+            ->get(['kegiatan.id', 'kegiatan.tanggal']);
 
+        $assignedKegiatanIds = $assignedKegiatan->pluck('id');
         $records = Absensi::query()
             ->where('user_id', $user->id)
-            ->when($fromDate, function ($query) use ($fromDate) {
-                $query->whereHas('kegiatan', function ($kegiatanQuery) use ($fromDate) {
-                    $kegiatanQuery->whereDate('tanggal', '>=', $fromDate->toDateString());
-                });
-            })
+            ->whereIn('kegiatan_id', $assignedKegiatanIds)
             ->get(['kegiatan_id', 'status']);
 
         $recordsByKegiatan = $records->keyBy('kegiatan_id');
         $today = now()->startOfDay();
         $recordedAlfa = $records->where('status', Absensi::STATUS_ALFA)->count();
-        $missingAlfa = $kegiatan
+        $missingAlfa = $assignedKegiatan
             ->filter(fn (Kegiatan $item) => $item->tanggal->startOfDay()->lte($today) && ! $recordsByKegiatan->has($item->id))
             ->count();
 
@@ -76,18 +75,18 @@ class AttendanceAnalyticsService
             'hadir' => $records->where('status', Absensi::STATUS_HADIR)->count(),
             'izin' => $records->where('status', Absensi::STATUS_IZIN)->count(),
             'alfa' => $recordedAlfa + $missingAlfa,
-            'total_kegiatan' => $kegiatan->count(),
-            'total_kegiatan_lalu' => $kegiatan->filter(fn (Kegiatan $item) => $item->tanggal->startOfDay()->lte($today))->count(),
+            'total_kegiatan' => $assignedKegiatan->count(),
+            'total_kegiatan_lalu' => $assignedKegiatan->filter(fn (Kegiatan $item) => $item->tanggal->startOfDay()->lte($today))->count(),
         ];
     }
 
     /**
      * @return array{
      *     months:int,
-     *     from_date:\Carbon\Carbon,
-     *     kegiatan:\Illuminate\Support\Collection<int, \App\Models\Kegiatan>,
-     *     records:\Illuminate\Support\Collection<int, \App\Models\Absensi>,
-     *     summary:\Illuminate\Support\Collection<int, array<string, mixed>>,
+     *     from_date:Carbon,
+     *     kegiatan:Collection<int, Kegiatan>,
+     *     records:Collection<int, Absensi>,
+     *     summary:Collection<int, array<string, mixed>>,
      *     totals:array<string, int|float>
      * }
      */
@@ -101,7 +100,12 @@ class AttendanceAnalyticsService
 
         $anggota = User::query()
             ->where('role', User::ROLE_ANGGOTA)
-            ->with('anggota')
+            ->with([
+                'anggota',
+                'assignedKegiatan' => fn ($query) => $query
+                    ->whereDate('tanggal', '>=', $fromDate->toDateString())
+                    ->select('kegiatan.id', 'tanggal'),
+            ])
             ->orderBy('name')
             ->get();
 
@@ -114,16 +118,21 @@ class AttendanceAnalyticsService
         $recordsByUser = $records->groupBy('user_id');
         $today = now()->startOfDay();
 
-        $summary = $anggota->map(function (User $user) use ($recordsByUser, $kegiatan, $today) {
-            $userRecords = $recordsByUser->get($user->id, collect())->keyBy('kegiatan_id');
+        $summary = $anggota->map(function (User $user) use ($recordsByUser, $today) {
+            $assignedKegiatan = $user->assignedKegiatan;
+            $assignedIds = $assignedKegiatan->pluck('id');
+            $userRecords = $recordsByUser
+                ->get($user->id, collect())
+                ->whereIn('kegiatan_id', $assignedIds)
+                ->keyBy('kegiatan_id');
             $hadir = $userRecords->where('status', Absensi::STATUS_HADIR)->count();
             $izin = $userRecords->where('status', Absensi::STATUS_IZIN)->count();
             $recordedAlfa = $userRecords->where('status', Absensi::STATUS_ALFA)->count();
-            $missingAlfa = $kegiatan
+            $missingAlfa = $assignedKegiatan
                 ->filter(fn (Kegiatan $item) => $item->tanggal->startOfDay()->lte($today) && ! $userRecords->has($item->id))
                 ->count();
             $alfa = $recordedAlfa + $missingAlfa;
-            $totalKegiatan = $kegiatan->count();
+            $totalKegiatan = $assignedKegiatan->count();
 
             return [
                 'user' => $user,
@@ -154,17 +163,23 @@ class AttendanceAnalyticsService
 
     public function attendancePercentage(?Carbon $fromDate = null): float
     {
-        $totalAnggota = User::query()->where('role', User::ROLE_ANGGOTA)->count();
-        $totalKegiatan = Kegiatan::query()
-            ->when($fromDate, fn ($query) => $query->whereDate('tanggal', '>=', $fromDate->toDateString()))
+        $totalAssignments = DB::table('kegiatan_anggota')
+            ->join('kegiatan', 'kegiatan.id', '=', 'kegiatan_anggota.kegiatan_id')
+            ->when($fromDate, fn ($query) => $query->whereDate('kegiatan.tanggal', '>=', $fromDate->toDateString()))
             ->count();
 
-        if ($totalAnggota === 0 || $totalKegiatan === 0) {
+        if ($totalAssignments === 0) {
             return 0.0;
         }
 
         $hadirCount = Absensi::query()
             ->where('status', Absensi::STATUS_HADIR)
+            ->whereExists(function ($query) {
+                $query->selectRaw('1')
+                    ->from('kegiatan_anggota')
+                    ->whereColumn('kegiatan_anggota.kegiatan_id', 'absensi.kegiatan_id')
+                    ->whereColumn('kegiatan_anggota.user_id', 'absensi.user_id');
+            })
             ->when($fromDate, function ($query) use ($fromDate) {
                 $query->whereHas('kegiatan', function ($kegiatanQuery) use ($fromDate) {
                     $kegiatanQuery->whereDate('tanggal', '>=', $fromDate->toDateString());
@@ -172,7 +187,7 @@ class AttendanceAnalyticsService
             })
             ->count();
 
-        return round(($hadirCount / ($totalAnggota * $totalKegiatan)) * 100, 2);
+        return round(($hadirCount / $totalAssignments) * 100, 2);
     }
 
     /**

@@ -1,8 +1,8 @@
 <x-app-layout>
     <x-slot name="header">
         <div>
-            <p class="text-sm font-medium text-slate-500">Anggota Panel</p>
-            <h2 class="font-display text-3xl font-semibold text-slate-900">Daftar Kegiatan</h2>
+           
+            <h2 class="font-display text-xl font-semibold text-slate-900">Daftar Kegiatan</h2>
         </div>
     </x-slot>
 
@@ -37,29 +37,38 @@
                             <th>Tanggal</th>
                             <th>Lokasi</th>
                             <th>Status</th>
+                            <th class="w-32">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse ($kegiatan as $item)
                             @php
-                                $hasAttended = in_array($item->id, $attendedIds, true);
+                                $statusClass = match ($item['status']) {
+                                    'hadir' => 'badge-success',
+                                    'izin' => 'badge-warning',
+                                    'tidak_ditugaskan', 'belum_absen' => 'badge-neutral',
+                                    default => 'badge-danger',
+                                };
                             @endphp
                             <tr>
                                 <td>
-                                    <p class="font-semibold text-slate-900">{{ $item->nama_kegiatan }}</p>
-                                    <p class="mt-2 text-sm leading-6 text-slate-500">{{ \Illuminate\Support\Str::limit($item->deskripsi, 120) }}</p>
+                                    <p class="font-semibold text-slate-900">{{ $item['kegiatan']->nama_kegiatan }}</p>
+                                    <p class="mt-2 text-sm leading-6 text-slate-500">{{ \Illuminate\Support\Str::limit($item['kegiatan']->deskripsi, 120) }}</p>
                                 </td>
-                                <td>{{ $item->tanggal->format('d M Y') }}</td>
-                                <td>{{ $item->lokasi }}</td>
+                                <td>{{ $item['kegiatan']->tanggal->format('d M Y') }}</td>
+                                <td>{{ $item['kegiatan']->lokasi }}</td>
                                 <td>
-                                    <span class="badge {{ $hasAttended ? 'badge-success' : 'badge-neutral' }}">
-                                        {{ $hasAttended ? 'Sudah Absen' : 'Belum Absen' }}
+                                    <span class="badge {{ $statusClass }}">
+                                        {{ str($item['status'])->replace('_', ' ')->title() }}
                                     </span>
+                                </td>
+                                <td>
+                                    <a href="{{ route('anggota.kegiatan.show', $item['kegiatan']) }}" class="btn-secondary !px-4 !py-2">Detail</a>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="4" class="text-center text-slate-500">Belum ada kegiatan yang sesuai pencarian.</td>
+                                <td colspan="5" class="text-center text-slate-500">Belum ada kegiatan yang sesuai pencarian.</td>
                             </tr>
                         @endforelse
                     </tbody>

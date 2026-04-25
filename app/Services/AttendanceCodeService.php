@@ -11,7 +11,7 @@ class AttendanceCodeService
 
     private const CODE_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 
-    public function generate(Kegiatan $kegiatan): KodeAbsensi
+    public function generate(Kegiatan $kegiatan, int $expiredMinutes = 15): KodeAbsensi
     {
         KodeAbsensi::query()
             ->where('kegiatan_id', $kegiatan->id)
@@ -25,7 +25,8 @@ class AttendanceCodeService
         return KodeAbsensi::query()->create([
             'kegiatan_id' => $kegiatan->id,
             'kode' => $kode,
-            'expired_at' => now()->addMinutes(15),
+            'expired_at' => now()->addMinutes($expiredMinutes),
+            'expired_minutes' => $expiredMinutes,
             'is_active' => true,
         ]);
     }

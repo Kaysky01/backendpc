@@ -52,7 +52,7 @@
                                 </td>
                                 <td>{{ $item->created_at->format('d M Y') }}</td>
                                 <td>
-                                    <div class="flex flex-wrap gap-2">
+                                    <div class="flex  gap-2">
                                         <a href="{{ route('admin.admins.edit', $item) }}" class="btn-secondary !px-4 !py-2">Edit</a>
                                         <form method="POST" action="{{ route('admin.admins.destroy', $item) }}" onsubmit="return confirm('Hapus admin ini?')">
                                             @csrf

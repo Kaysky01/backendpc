@@ -26,6 +26,8 @@ class AnggotaController extends Controller
                     $builder
                         ->where('name', 'like', "%{$search}%")
                         ->orWhere('email', 'like', "%{$search}%")
+                        ->orWhere('divisi', 'like', "%{$search}%")
+                        ->orWhere('role_detail', 'like', "%{$search}%")
                         ->orWhereHas('anggota', function (Builder $anggotaQuery) use ($search) {
                             $anggotaQuery
                                 ->where('npm', 'like', "%{$search}%")
@@ -59,6 +61,8 @@ class AnggotaController extends Controller
                 'email' => $validated['email'],
                 'password' => $validated['password'],
                 'role' => User::ROLE_ANGGOTA,
+                'divisi' => $validated['divisi'] ?: null,
+                'role_detail' => $validated['role_detail'] ?: null,
             ]);
 
             $user->anggota()->create([
@@ -92,6 +96,8 @@ class AnggotaController extends Controller
             $userData = [
                 'name' => $validated['name'],
                 'email' => $validated['email'],
+                'divisi' => $validated['divisi'] ?: null,
+                'role_detail' => $validated['role_detail'] ?: null,
             ];
 
             if (! empty($validated['password'])) {
@@ -142,6 +148,8 @@ class AnggotaController extends Controller
                 'confirmed',
                 Password::defaults(),
             ],
+            'divisi' => ['nullable', 'string', 'max:255'],
+            'role_detail' => ['nullable', 'string', 'max:255'],
             'npm' => [
                 'required',
                 'string',

@@ -22,14 +22,14 @@
                     <p class="mt-4 text-xs font-semibold uppercase tracking-[0.24em] text-sky-600">PCAS</p>
                     <h1 class="mt-2 font-display text-2xl font-semibold text-slate-900">Polinela Creative Attendance System</h1>
                     <p class="mt-3 text-sm leading-6 text-slate-500">
-                        Sistem absensi kegiatan dengan antarmuka sederhana, rapi, dan siap dipakai untuk operasional harian.
+                        Sistem Pendataan Kegiatan dan Monitoring Kinerja Anggota Polinela Creative Team.
                     </p>
                 </div>
 
                 {{ $slot }}
 
                 <p class="mt-6 text-center text-xs text-slate-400">
-                    Laravel 13 • Blade • Tailwind CSS
+                    Polinela Creative Team &copy; {{ date('Y') }}. All rights reserved.
                 </p>
             </div>
         </div>

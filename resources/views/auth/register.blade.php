@@ -37,6 +37,12 @@
                 </div>
 
                 <div class="md:col-span-2">
+                    <x-input-label for="divisi" value="Divisi" />
+                    <x-text-input id="divisi" type="text" name="divisi" :value="old('divisi')" placeholder="Divisi desain, media, dokumentasi, dll." />
+                    <x-input-error :messages="$errors->get('divisi')" class="mt-2" />
+                </div>
+
+                <div class="md:col-span-2">
                     <x-input-label for="email" value="Email" />
                     <x-text-input id="email" type="email" name="email" :value="old('email')" required autocomplete="username" placeholder="nama@polinela.ac.id" />
                     <x-input-error :messages="$errors->get('email')" class="mt-2" />

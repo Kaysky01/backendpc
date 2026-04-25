@@ -16,6 +16,18 @@
     </div>
 
     <div>
+        <x-input-label for="divisi" value="Divisi" />
+        <x-text-input id="divisi" name="divisi" type="text" :value="old('divisi', $anggota?->divisi)" placeholder="Divisi desain, media, dokumentasi" />
+        <x-input-error :messages="$errors->get('divisi')" class="mt-2" />
+    </div>
+
+    <div>
+        <x-input-label for="role_detail" value="Role Detail" />
+        <x-text-input id="role_detail" name="role_detail" type="text" :value="old('role_detail', $anggota?->role_detail)" placeholder="Koordinator, anggota aktif, PIC, dst." />
+        <x-input-error :messages="$errors->get('role_detail')" class="mt-2" />
+    </div>
+
+    <div>
         <x-input-label for="npm" value="NPM" />
         <x-text-input id="npm" name="npm" type="text" :value="old('npm', $anggotaProfile?->npm)" required placeholder="2315xxxxxxx" />
         <x-input-error :messages="$errors->get('npm')" class="mt-2" />

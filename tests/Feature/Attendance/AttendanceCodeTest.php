@@ -25,6 +25,7 @@ class AttendanceCodeTest extends TestCase
         $kegiatan = Kegiatan::factory()->create([
             'tanggal' => now()->toDateString(),
         ]);
+        $kegiatan->assignedUsers()->sync([$user->id]);
 
         KodeAbsensi::factory()->create([
             'kegiatan_id' => $kegiatan->id,
@@ -58,6 +59,7 @@ class AttendanceCodeTest extends TestCase
         $kegiatan = Kegiatan::factory()->create([
             'tanggal' => now()->toDateString(),
         ]);
+        $kegiatan->assignedUsers()->sync([$user->id]);
 
         KodeAbsensi::factory()->create([
             'kegiatan_id' => $kegiatan->id,
@@ -77,13 +79,13 @@ class AttendanceCodeTest extends TestCase
             ->from(route('anggota.absensi.create'))
             ->post(route('anggota.absensi.store'), ['kode' => 'EXP123'])
             ->assertRedirect(route('anggota.absensi.create'))
-            ->assertSessionHasErrors('kode');
+            ->assertSessionHas('error', 'Kode expired');
 
         $this->actingAs($user)
             ->from(route('anggota.absensi.create'))
             ->post(route('anggota.absensi.store'), ['kode' => 'OFF123'])
             ->assertRedirect(route('anggota.absensi.create'))
-            ->assertSessionHasErrors('kode');
+            ->assertSessionHas('error', 'Kode tidak valid');
 
         $this->assertDatabaseCount('absensi', 0);
     }
@@ -100,6 +102,7 @@ class AttendanceCodeTest extends TestCase
         $kegiatan = Kegiatan::factory()->create([
             'tanggal' => now()->toDateString(),
         ]);
+        $kegiatan->assignedUsers()->sync([$user->id]);
 
         KodeAbsensi::factory()->create([
             'kegiatan_id' => $kegiatan->id,
@@ -119,8 +122,37 @@ class AttendanceCodeTest extends TestCase
             ->from(route('anggota.absensi.create'))
             ->post(route('anggota.absensi.store'), ['kode' => 'DUP123'])
             ->assertRedirect(route('anggota.absensi.create'))
-            ->assertSessionHasErrors('kode');
+            ->assertSessionHas('error', 'Sudah absen');
 
         $this->assertDatabaseCount('absensi', 1);
+    }
+
+    public function test_anggota_can_not_submit_code_when_not_assigned(): void
+    {
+        $user = User::factory()->anggota()->create();
+        $user->anggota()->create([
+            'npm' => '2315101114',
+            'prodi' => 'Teknologi Informasi',
+            'angkatan' => '2024',
+        ]);
+
+        $kegiatan = Kegiatan::factory()->create([
+            'tanggal' => now()->toDateString(),
+        ]);
+
+        KodeAbsensi::factory()->create([
+            'kegiatan_id' => $kegiatan->id,
+            'kode' => 'NASIGN',
+            'expired_at' => now()->addMinutes(10),
+            'is_active' => true,
+        ]);
+
+        $this->actingAs($user)
+            ->from(route('anggota.absensi.create'))
+            ->post(route('anggota.absensi.store'), ['kode' => 'NASIGN'])
+            ->assertRedirect(route('anggota.absensi.create'))
+            ->assertSessionHas('error', 'Tidak ditugaskan');
+
+        $this->assertDatabaseCount('absensi', 0);
     }
 }

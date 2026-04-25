@@ -1,8 +1,8 @@
 <x-app-layout>
     <x-slot name="header">
         <div>
-            <p class="text-sm font-medium text-slate-500">Anggota Panel</p>
-            <h2 class="font-display text-3xl font-semibold text-slate-900">Dashboard Personal</h2>
+        
+            <h2 class="font-display text-xl font-semibold text-slate-900">Dashboard </h2>
         </div>
     </x-slot>
 

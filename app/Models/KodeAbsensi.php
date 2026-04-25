@@ -22,6 +22,7 @@ class KodeAbsensi extends Model
         'kegiatan_id',
         'kode',
         'expired_at',
+        'expired_minutes',
         'is_active',
     ];
 
@@ -32,6 +33,7 @@ class KodeAbsensi extends Model
     {
         return [
             'expired_at' => 'datetime',
+            'expired_minutes' => 'integer',
             'is_active' => 'boolean',
         ];
     }

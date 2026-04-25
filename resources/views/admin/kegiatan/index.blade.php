@@ -36,8 +36,9 @@
                             <th>Kegiatan</th>
                             <th>Tanggal</th>
                             <th>Lokasi</th>
+                            <th>Ditugaskan</th>
                             <th>Deskripsi</th>
-                            <th class="w-44">Aksi</th>
+                            <th class="w-52">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -46,9 +47,11 @@
                                 <td class="font-semibold text-slate-900">{{ $item->nama_kegiatan }}</td>
                                 <td>{{ $item->tanggal->format('d M Y') }}</td>
                                 <td>{{ $item->lokasi }}</td>
+                                <td>{{ $item->assigned_users_count }}</td>
                                 <td class="max-w-md text-slate-600">{{ \Illuminate\Support\Str::limit($item->deskripsi, 120) }}</td>
                                 <td>
                                     <div class="flex flex-wrap gap-2">
+                                        <a href="{{ route('admin.kegiatan.show', $item) }}" class="btn-secondary !px-4 !py-2">Detail</a>
                                         <a href="{{ route('admin.kegiatan.edit', $item) }}" class="btn-secondary !px-4 !py-2">Edit</a>
                                         <form method="POST" action="{{ route('admin.kegiatan.destroy', $item) }}" onsubmit="return confirm('Hapus kegiatan ini?')">
                                             @csrf
@@ -60,7 +63,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="text-center text-slate-500">Belum ada kegiatan yang sesuai dengan filter.</td>
+                                <td colspan="6" class="text-center text-slate-500">Belum ada kegiatan yang sesuai dengan filter.</td>
                             </tr>
                         @endforelse
                     </tbody>
