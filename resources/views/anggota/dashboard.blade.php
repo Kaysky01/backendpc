@@ -40,7 +40,7 @@
             </div>
         </div>
 
-        <div class="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
+        <div class="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-[1.1fr_0.9fr]">
             <section class="section-card">
                 <div class="flex items-center justify-between gap-4">
                     <div>

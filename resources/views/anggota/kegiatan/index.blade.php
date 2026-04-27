@@ -13,7 +13,7 @@
                     <h3 class="font-display text-2xl font-semibold text-slate-900">Kegiatan Tersedia</h3>
                     <p class="mt-2 text-sm text-slate-500">Periksa status apakah Anda sudah melakukan absensi pada kegiatan terkait.</p>
                 </div>
-                <a href="{{ route('anggota.absensi.create') }}" class="btn-primary">Input Kode Absensi</a>
+                <a href="{{ route('anggota.absensi.create') }}" class="btn-primary w-full md:w-auto">Input Kode Absensi</a>
             </div>
 
             <form method="GET" class="mt-6 grid gap-4 md:grid-cols-[1fr_auto]">
@@ -24,7 +24,7 @@
                     class="form-control mt-0"
                     placeholder="Cari nama kegiatan, lokasi, atau deskripsi"
                 >
-                <button type="submit" class="btn-secondary">Filter</button>
+                <button type="submit" class="btn-secondary w-full md:w-auto">Filter</button>
             </form>
         </section>
 
@@ -63,7 +63,7 @@
                                     </span>
                                 </td>
                                 <td>
-                                    <a href="{{ route('anggota.kegiatan.show', $item['kegiatan']) }}" class="btn-secondary !px-4 !py-2">Detail</a>
+                                    <a href="{{ route('anggota.kegiatan.show', $item['kegiatan']) }}" class="btn-secondary w-full md:w-auto">Detail</a>
                                 </td>
                             </tr>
                         @empty

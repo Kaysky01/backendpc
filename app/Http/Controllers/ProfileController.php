@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
@@ -16,8 +17,10 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): View
     {
+        $user = $request->user()->load('anggota');
+
         return view('profile.edit', [
-            'user' => $request->user(),
+            'user' => $user,
         ]);
     }
 
@@ -26,13 +29,38 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        $user = $request->user();
+        $validated = $request->validated();
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
-        }
+        DB::transaction(function () use ($user, $validated) {
+            $userData = [
+                'name' => $validated['name'],
+                'email' => $validated['email'],
+                'divisi' => ($validated['divisi'] ?? null) ?: null,
+                'role_detail' => ($validated['role_detail'] ?? null) ?: null,
+            ];
 
-        $request->user()->save();
+            $user->fill($userData);
+
+            if ($user->isDirty('email')) {
+                $user->email_verified_at = null;
+            }
+
+            if (! empty($validated['password'])) {
+                $user->password = $validated['password'];
+            }
+
+            $user->save();
+
+            $user->anggota()->updateOrCreate(
+                [],
+                [
+                    'npm' => ($validated['npm'] ?? null) ?: null,
+                    'prodi' => ($validated['prodi'] ?? null) ?: null,
+                    'angkatan' => ($validated['angkatan'] ?? null) ?: null,
+                ]
+            );
+        });
 
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }

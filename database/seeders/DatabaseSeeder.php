@@ -25,6 +25,7 @@ class DatabaseSeeder extends Seeder
             'password' => 'password',
             'role' => User::ROLE_ADMIN,
             'is_super_admin' => true,
+            'email_verified_at' => now(),
         ]);
 
         User::query()->updateOrCreate([
@@ -34,6 +35,7 @@ class DatabaseSeeder extends Seeder
             'password' => 'password',
             'role' => User::ROLE_ADMIN,
             'is_super_admin' => false,
+            'email_verified_at' => now(),
         ]);
 
         $anggotaUsers = collect([
@@ -49,6 +51,7 @@ class DatabaseSeeder extends Seeder
                 'password' => 'password',
                 'role' => User::ROLE_ANGGOTA,
                 'is_super_admin' => false,
+                'email_verified_at' => now(),
             ]);
 
             $user->anggota()->updateOrCreate([], [

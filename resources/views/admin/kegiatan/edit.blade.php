@@ -10,7 +10,7 @@
         <h3 class="font-display text-2xl font-semibold text-slate-900">{{ $kegiatan->nama_kegiatan }}</h3>
         <p class="mt-2 text-sm text-slate-500">Perbarui detail jadwal, lokasi, dan deskripsi kegiatan.</p>
 
-        <form method="POST" action="{{ route('admin.kegiatan.update', $kegiatan) }}" class="mt-6">
+        <form method="POST" action="{{ route('admin.kegiatan.update', $kegiatan) }}" class="mt-6" data-loading-form>
             @csrf
             @method('PUT')
             @include('admin.kegiatan._form', ['submitLabel' => 'Perbarui Kegiatan'])

@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div>
             
-            <h2 class="font-display text-3xl font-semibold text-slate-900">Dashboard Kehadiran</h2>
+            <h2 class="font-display text-xl font-semibold text-slate-900">Dashboard Kehadiran</h2>
         </div>
     </x-slot>
 
@@ -53,7 +53,7 @@
             </div>
         </div>
 
-        <div class="grid gap-6 xl:grid-cols-[1.4fr_0.9fr]">
+        <div class="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-[1.4fr_0.9fr]">
             <section class="section-card">
                 <div class="flex items-center justify-between gap-4">
                     <div>

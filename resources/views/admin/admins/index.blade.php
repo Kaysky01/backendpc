@@ -1,8 +1,8 @@
 <x-app-layout>
     <x-slot name="header">
         <div>
-            <p class="text-sm font-medium text-slate-500">Super Admin</p>
-            <h2 class="font-display text-3xl font-semibold text-slate-900">Manajemen Admin</h2>
+            
+            <h2 class="font-display text-xl font-semibold text-slate-900">Manajemen Admin</h2>
         </div>
     </x-slot>
 
@@ -13,7 +13,7 @@
                     <h3 class="font-display text-2xl font-semibold text-slate-900">Daftar Admin</h3>
                     <p class="mt-2 text-sm text-slate-500">Hanya super admin yang dapat membuat, mengubah, dan menghapus admin.</p>
                 </div>
-                <a href="{{ route('admin.admins.create') }}" class="btn-primary">Tambah Admin</a>
+                <a href="{{ route('admin.admins.create') }}" class="btn-primary w-full md:w-auto">Tambah Admin</a>
             </div>
 
             <form method="GET" class="mt-6 grid gap-4 md:grid-cols-[1fr_auto]">
@@ -24,7 +24,7 @@
                     class="form-control mt-0"
                     placeholder="Cari nama atau email admin"
                 >
-                <button type="submit" class="btn-secondary">Filter</button>
+                <button type="submit" class="btn-secondary w-full md:w-auto">Filter</button>
             </form>
         </section>
 
@@ -51,13 +51,13 @@
                                     </span>
                                 </td>
                                 <td>{{ $item->created_at->format('d M Y') }}</td>
-                                <td>
-                                    <div class="flex  gap-2">
-                                        <a href="{{ route('admin.admins.edit', $item) }}" class="btn-secondary !px-4 !py-2">Edit</a>
-                                        <form method="POST" action="{{ route('admin.admins.destroy', $item) }}" onsubmit="return confirm('Hapus admin ini?')">
+                                <td class="whitespace-nowrap align-middle">
+                                    <div class="flex flex-col gap-2 sm:flex-row sm:items-center">
+                                        <a href="{{ route('admin.admins.edit', $item) }}" class="btn-secondary w-full sm:w-auto">Edit</a>
+                                        <form method="POST" action="{{ route('admin.admins.destroy', $item) }}" onsubmit="return confirm('Hapus admin ini?')" data-loading-form>
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn-danger !px-4 !py-2">Hapus</button>
+                                            <button type="submit" class="btn-danger w-full sm:w-auto" data-loading-label="Menghapus...">Hapus</button>
                                         </form>
                                     </div>
                                 </td>

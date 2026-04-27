@@ -1,8 +1,8 @@
 <x-app-layout>
     <x-slot name="header">
         <div>
-            <p class="text-sm font-medium text-slate-500">Admin Panel</p>
-            <h2 class="font-display text-3xl font-semibold text-slate-900">Manajemen Kegiatan</h2>
+
+            <h2 class="font-display text-xl font-semibold text-slate-900">Manajemen Kegiatan</h2>
         </div>
     </x-slot>
 
@@ -13,7 +13,7 @@
                     <h3 class="font-display text-2xl font-semibold text-slate-900">Daftar Kegiatan</h3>
                     <p class="mt-2 text-sm text-slate-500">Simpan kegiatan yang nanti dipakai untuk absensi dan rekap laporan.</p>
                 </div>
-                <a href="{{ route('admin.kegiatan.create') }}" class="btn-primary">Tambah Kegiatan</a>
+                <a href="{{ route('admin.kegiatan.create') }}" class="btn-primary w-full md:w-auto">Tambah Kegiatan</a>
             </div>
 
             <form method="GET" class="mt-6 grid gap-4 md:grid-cols-[1fr_auto]">
@@ -24,7 +24,7 @@
                     class="form-control mt-0"
                     placeholder="Cari nama kegiatan, lokasi, atau deskripsi"
                 >
-                <button type="submit" class="btn-secondary">Filter</button>
+                <button type="submit" class="btn-secondary w-full md:w-auto">Filter</button>
             </form>
         </section>
 
@@ -49,14 +49,14 @@
                                 <td>{{ $item->lokasi }}</td>
                                 <td>{{ $item->assigned_users_count }}</td>
                                 <td class="max-w-md text-slate-600">{{ \Illuminate\Support\Str::limit($item->deskripsi, 120) }}</td>
-                                <td>
-                                    <div class="flex flex-wrap gap-2">
-                                        <a href="{{ route('admin.kegiatan.show', $item) }}" class="btn-secondary !px-4 !py-2">Detail</a>
-                                        <a href="{{ route('admin.kegiatan.edit', $item) }}" class="btn-secondary !px-4 !py-2">Edit</a>
-                                        <form method="POST" action="{{ route('admin.kegiatan.destroy', $item) }}" onsubmit="return confirm('Hapus kegiatan ini?')">
+                                <td class="whitespace-nowrap align-middle">
+                                    <div class="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
+                                        <a href="{{ route('admin.kegiatan.show', $item) }}" class="btn-secondary w-full sm:w-auto">Detail</a>
+                                        <a href="{{ route('admin.kegiatan.edit', $item) }}" class="btn-secondary w-full sm:w-auto">Edit</a>
+                                        <form method="POST" action="{{ route('admin.kegiatan.destroy', $item) }}" onsubmit="return confirm('Hapus kegiatan ini?')" data-loading-form>
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn-danger !px-4 !py-2">Hapus</button>
+                                            <button type="submit" class="btn-danger w-full sm:w-auto" data-loading-label="Menghapus...">Hapus</button>
                                         </form>
                                     </div>
                                 </td>

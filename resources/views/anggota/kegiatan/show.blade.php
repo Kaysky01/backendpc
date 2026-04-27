@@ -41,7 +41,7 @@
                     <h3 class="font-display text-2xl font-semibold text-slate-900">Aksi Kehadiran</h3>
                     <p class="mt-2 text-sm text-slate-500">Gunakan halaman input kode jika Anda ditugaskan dan kode masih aktif.</p>
                 </div>
-                <a href="{{ route('anggota.absensi.create') }}" class="btn-primary {{ $canAttend ? '' : 'pointer-events-none opacity-60' }}">
+                <a href="{{ route('anggota.absensi.create') }}" class="btn-primary w-full md:w-auto {{ $canAttend ? '' : 'pointer-events-none opacity-60' }}">
                     Input Kode Absensi
                 </a>
             </div>

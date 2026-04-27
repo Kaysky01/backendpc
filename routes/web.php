@@ -27,7 +27,7 @@ Route::get('/dashboard', DashboardRedirectController::class)
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::match(['put', 'patch'], '/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
@@ -58,6 +58,7 @@ Route::prefix('admin')
         Route::get('kode-absensi', [KodeAbsensiController::class, 'index'])->name('kode-absensi.index');
         Route::post('kegiatan/{kegiatan}/kode-absensi', [KodeAbsensiController::class, 'store'])->name('kode-absensi.store');
         Route::patch('kode-absensi/{kodeAbsensi}/toggle', [KodeAbsensiController::class, 'toggle'])->name('kode-absensi.toggle');
+        Route::delete('kode-absensi/{kodeAbsensi}', [KodeAbsensiController::class, 'destroy'])->name('kode-absensi.destroy');
 
         Route::get('absensi', [AdminAbsensiController::class, 'index'])->name('absensi.index');
         Route::get('absensi/create', [AdminAbsensiController::class, 'create'])->name('absensi.create');

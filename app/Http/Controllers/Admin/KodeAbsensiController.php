@@ -11,7 +11,6 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
-use Illuminate\Support\Facades\DB;
 
 class KodeAbsensiController extends Controller
 {
@@ -19,27 +18,28 @@ class KodeAbsensiController extends Controller
     {
         $status = (string) $request->string('status');
         $selectedKegiatan = $request->integer('kegiatan_id');
+        $kegiatanList = Kegiatan::query()
+            ->with('latestCode')
+            ->orderByDesc('tanggal')
+            ->get();
+        $currentKegiatan = $selectedKegiatan > 0
+            ? $kegiatanList->firstWhere('id', $selectedKegiatan)
+            : null;
 
         $kodeAbsensi = KodeAbsensi::query()
-    ->with('kegiatan')
-    ->select('kode_absensi.*')
-    ->join(
-        DB::raw('(SELECT MAX(id) as id FROM kode_absensi GROUP BY kegiatan_id) as latest'),
-        'kode_absensi.id',
-        '=',
-        'latest.id'
-    )
-    ->when($selectedKegiatan > 0, fn ($query) => $query->where('kode_absensi.kegiatan_id', $selectedKegiatan))
-    ->when($status === 'active', fn ($query) => $query->where('is_active', true)->where('expired_at', '>=', now()))
-    ->when($status === 'inactive', fn ($query) => $query->where('is_active', false))
-    ->when($status === 'expired', fn ($query) => $query->where('expired_at', '<', now()))
-    ->latest('kode_absensi.id')
-    ->paginate(12)
-    ->withQueryString();
+            ->with('kegiatan')
+            ->when($selectedKegiatan > 0, fn ($query) => $query->where('kegiatan_id', $selectedKegiatan))
+            ->when($status === 'active', fn ($query) => $query->where('is_active', true)->where('expired_at', '>=', now()))
+            ->when($status === 'inactive', fn ($query) => $query->where('is_active', false)->where('expired_at', '>=', now()))
+            ->when($status === 'expired', fn ($query) => $query->where('expired_at', '<', now()))
+            ->latest('id')
+            ->paginate(12)
+            ->withQueryString();
 
         return view('admin.kode-absensi.index', [
             'kodeAbsensi' => $kodeAbsensi,
-            'kegiatanList' => Kegiatan::query()->with('latestCode')->orderByDesc('tanggal')->get(),
+            'kegiatanList' => $kegiatanList,
+            'currentKegiatan' => $currentKegiatan,
             'selectedKegiatan' => $selectedKegiatan,
             'status' => $status,
         ]);
@@ -72,8 +72,7 @@ class KodeAbsensiController extends Controller
             "Generate kode {$kodeAbsensi->kode} untuk kegiatan {$kegiatan->nama_kegiatan} dengan durasi {$expiredMinutes} menit."
         );
 
-        return redirect()
-            ->route('admin.kode-absensi.index')
+        return back()
             ->with('success', "Kode absensi {$kodeAbsensi->kode} berhasil dibuat untuk kegiatan {$kegiatan->nama_kegiatan}.");
     }
 
@@ -96,5 +95,21 @@ class KodeAbsensiController extends Controller
         ]);
 
         return back()->with('success', 'Status kode absensi berhasil diperbarui.');
+    }
+
+    public function destroy(Request $request, KodeAbsensi $kodeAbsensi, ActivityLogService $activityLogService): RedirectResponse
+    {
+        $kode = $kodeAbsensi->kode;
+        $namaKegiatan = $kodeAbsensi->kegiatan->nama_kegiatan;
+
+        $kodeAbsensi->delete();
+
+        $activityLogService->log(
+            $request->user(),
+            'delete_kode',
+            "Menghapus kode {$kode} dari kegiatan {$namaKegiatan}."
+        );
+
+        return back()->with('success', "Kode absensi {$kode} berhasil dihapus.");
     }
 }

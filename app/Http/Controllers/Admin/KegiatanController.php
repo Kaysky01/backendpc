@@ -139,6 +139,7 @@ class KegiatanController extends Controller
     {
         return User::query()
             ->where('role', User::ROLE_ANGGOTA)
+            ->with('anggota:id,user_id,npm')
             ->orderBy('name')
             ->get();
     }

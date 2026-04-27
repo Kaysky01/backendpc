@@ -1,8 +1,8 @@
 <x-app-layout>
     <x-slot name="header">
         <div>
-            <p class="text-sm font-medium text-slate-500">Admin Panel</p>
-            <h2 class="font-display text-3xl font-semibold text-slate-900">Manajemen Anggota</h2>
+
+            <h2 class="font-display text-xl font-semibold text-slate-900">Manajemen Anggota</h2>
         </div>
     </x-slot>
 
@@ -17,8 +17,8 @@
                 </div>
 
                 <!-- FIXED AREA -->
-                <div class="flex flex-wrap items-end gap-3">
-                    <form method="POST" action="{{ route('admin.anggota.import') }}" enctype="multipart/form-data" class="flex items-end gap-3">
+                <div class="flex w-full flex-col gap-3 lg:w-auto lg:flex-row lg:flex-wrap lg:items-end">
+                    <form method="POST" action="{{ route('admin.anggota.import') }}" enctype="multipart/form-data" class="flex w-full flex-col gap-3 sm:flex-row sm:items-end lg:w-auto" data-loading-form>
                         @csrf
 
                         <input
@@ -26,15 +26,15 @@
                             name="file"
                             accept=".xlsx,.xls,.csv"
                             required
-                            class="form-control h-10 mt-0 max-w-xs"
+                            class="form-control mt-0 w-full sm:max-w-xs"
                         >
 
-                        <button type="submit" class="btn-secondary h-10 px-4">
+                        <button type="submit" class="btn-secondary w-full md:w-auto" data-loading-label="Mengimpor...">
                             Import
                         </button>
                     </form>
 
-                    <a href="{{ route('admin.anggota.create') }}" class="btn-primary h-10 px-4 flex items-center">
+                    <a href="{{ route('admin.anggota.create') }}" class="btn-primary w-full md:w-auto">
                         Tambah Anggota
                     </a>
                 </div>
@@ -45,10 +45,10 @@
                     type="text"
                     name="search"
                     value="{{ $search }}"
-                    class="form-control mt-0 h-10"
+                    class="form-control mt-0"
                     placeholder="Cari nama, email, NPM, prodi, angkatan, divisi, atau role detail"
                 >
-                <button type="submit" class="btn-secondary h-10 px-4">Filter</button>
+                <button type="submit" class="btn-secondary w-full md:w-auto">Filter</button>
             </form>
 
             <p class="mt-3 text-xs text-slate-500">
@@ -87,20 +87,22 @@
                                 <td>{{ $item->role_detail ?? '-' }}</td>
                                 <td>{{ $item->email }}</td>
                                 <td class="whitespace-nowrap align-middle">
-                                        <div class="flex items-center gap-2">
+                                        <div class="flex flex-col gap-2 sm:flex-row sm:items-center">
                                             <a href="{{ route('admin.anggota.edit', $item) }}"
-                                            class="btn-secondary action-btn px-3 h-9 flex items-center justify-center text-sm">
+                                            class="btn-secondary w-full sm:w-auto">
                                                 Edit
                                             </a>
 
                                             <form method="POST"
                                                 action="{{ route('admin.anggota.destroy', $item) }}"
-                                                onsubmit="return confirm('Hapus anggota ini?')">
+                                                onsubmit="return confirm('Hapus anggota ini?')"
+                                                data-loading-form>
                                                 @csrf
                                                 @method('DELETE')
 
                                                 <button type="submit"
-                                                        class="btn-danger action-btn px-3 h-9 flex items-center justify-center text-sm">
+                                                        class="btn-danger w-full sm:w-auto"
+                                                        data-loading-label="Menghapus...">
                                                     Hapus
                                                 </button>
                                             </form>

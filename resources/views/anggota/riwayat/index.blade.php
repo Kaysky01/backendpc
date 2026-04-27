@@ -13,9 +13,9 @@
                     <h3 class="font-display text-xl font-semibold text-slate-900">Periode Riwayat</h3>
                     <p class="mt-2 text-sm text-slate-500">Tinjau kehadiran Anda dalam 1, 3, atau 6 bulan terakhir.</p>
                 </div>
-                <div class="flex flex-wrap gap-3">
+                <div class="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
                     @foreach ([1, 3, 6] as $item)
-                        <a href="{{ route('anggota.riwayat.index', ['period' => $item]) }}" class="{{ $period === $item ? 'btn-primary' : 'btn-secondary' }}">
+                        <a href="{{ route('anggota.riwayat.index', ['period' => $item]) }}" class="{{ $period === $item ? 'btn-active' : 'btn-secondary' }} w-full sm:w-auto">
                             {{ $item }} Bulan
                         </a>
                     @endforeach

@@ -7,6 +7,7 @@
 @php
     $tag = $href ? 'a' : 'button';
     $classes = match ($variant) {
+        'active' => 'btn-active',
         'secondary' => 'btn-secondary',
         'danger' => 'btn-danger',
         default => 'btn-primary',

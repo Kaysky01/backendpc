@@ -1,8 +1,8 @@
 <x-app-layout>
     <x-slot name="header">
         <div>
-            <p class="text-sm font-medium text-slate-500">Admin Panel</p>
-            <h2 class="font-display text-3xl font-semibold text-slate-900">Monitoring Absensi</h2>
+            >
+            <h2 class="font-display text-xl font-semibold text-slate-900">Monitoring Absensi</h2>
         </div>
     </x-slot>
 
@@ -17,7 +17,8 @@
     <form method="POST"
           action="{{ route('admin.absensi.import') }}"
           enctype="multipart/form-data"
-          class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+          class="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center"
+          data-loading-form>
         @csrf
 
         <input type="file"
@@ -27,13 +28,14 @@
                required>
 
         <button type="submit"
-                class="btn-secondary h-10 flex items-center justify-center whitespace-nowrap">
+                class="btn-secondary w-full md:w-auto whitespace-nowrap"
+                data-loading-label="Mengimpor...">
             Import Absensi
         </button>
     </form>
 
     <a href="{{ route('admin.absensi.create') }}"
-       class="btn-primary h-10 flex items-center justify-center whitespace-nowrap">
+       class="btn-primary w-full md:w-auto whitespace-nowrap">
         Tambah Absensi Manual
     </a>
 </div>
@@ -66,7 +68,7 @@
                 </select>
 
                 <input type="date" name="tanggal" value="{{ $filters['tanggal'] }}" class="form-control mt-0">
-                <button type="submit" class="btn-secondary">Terapkan Filter</button>
+                <button type="submit" class="btn-secondary w-full md:w-auto">Terapkan Filter</button>
             </form>
             <p class="mt-3 text-xs text-slate-500">Format import: `nama_kegiatan | tanggal | lokasi | nama_user | email | status | waktu_absen`.</p>
         </section>
@@ -107,7 +109,7 @@
                                 <td>{{ $item->kegiatan->tanggal->format('d M Y') }}</td>
                                 <td>{{ $item->waktu_absen->format('d M Y H:i:s') }}</td>
                                 <td class="whitespace-nowrap align-middle text-center">
-                                    <a href="{{ route('admin.absensi.edit', $item) }}" class="btn-secondary !px-4 !py-2">Edit</a>
+                                    <a href="{{ route('admin.absensi.edit', $item) }}" class="btn-secondary w-full md:w-auto">Edit</a>
                                 </td>
                             </tr>
                         @empty

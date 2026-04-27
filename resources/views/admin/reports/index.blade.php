@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div>
             <p class="text-sm font-medium text-slate-500">Admin Panel</p>
-            <h2 class="font-display text-3xl font-semibold text-slate-900">Rekap Absensi</h2>
+            <h2 class="font-display text-xl font-semibold text-slate-900">Rekap Absensi</h2>
         </div>
     </x-slot>
 
@@ -14,16 +14,16 @@
                     <p class="mt-2 text-sm text-slate-500">Pilih rentang 1, 3, atau 6 bulan lalu ekspor laporan ke PDF.</p>
                 </div>
 
-                <div class="flex flex-wrap gap-3">
+                <div class="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
                     @foreach ([1, 3, 6] as $item)
                         <a
                             href="{{ route('admin.reports.index', ['period' => $item]) }}"
-                            class="{{ $period === $item ? 'btn-primary' : 'btn-secondary' }}"
+                            class="{{ $period === $item ? 'btn-active' : 'btn-secondary' }} w-full sm:w-auto"
                         >
                             {{ $item }} Bulan
                         </a>
                     @endforeach
-                    <a href="{{ route('admin.reports.export', ['period' => $period]) }}" class="btn-primary">
+                    <a href="{{ route('admin.reports.export', ['period' => $period]) }}" class="btn-primary w-full sm:w-auto">
                         Export PDF
                     </a>
                 </div>
@@ -50,7 +50,7 @@
         </div>
 
         <section class="table-shell">
-            <div class="border-b border-slate-100 px-6 py-5">
+            <div class="border-b border-slate-100 px-4 py-4 sm:px-6 sm:py-5">
                 <h3 class="font-display text-2xl font-semibold text-slate-900">Ringkasan Per Anggota</h3>
                 <p class="mt-2 text-sm text-slate-500">Rekap dihitung sejak {{ $report['from_date']->format('d M Y') }}.</p>
             </div>
@@ -87,7 +87,7 @@
         </section>
 
         <section class="table-shell">
-            <div class="border-b border-slate-100 px-6 py-5">
+            <div class="border-b border-slate-100 px-4 py-4 sm:px-6 sm:py-5">
                 <h3 class="font-display text-2xl font-semibold text-slate-900">Daftar Absensi Tercatat</h3>
             </div>
             <div class="overflow-x-auto">

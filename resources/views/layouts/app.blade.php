@@ -19,7 +19,7 @@
                 $statusMessage = match (session('status')) {
                     'profile-updated' => 'Profil berhasil diperbarui.',
                     'password-updated' => 'Password berhasil diperbarui.',
-                    'verification-link-sent' => 'Link verifikasi baru berhasil dikirim.',
+                    'verification-link-sent' => 'Link verifikasi telah dikirim ke email Anda.',
                     default => session('status'),
                 };
             @endphp

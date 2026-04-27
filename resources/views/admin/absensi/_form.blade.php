@@ -48,7 +48,7 @@
     </div>
 </div>
 
-<div class="mt-6 flex items-center justify-between border-t border-slate-100 pt-5">
-    <a href="{{ route('admin.absensi.index') }}" class="btn-secondary">Kembali</a>
-    <x-primary-button>{{ $submitLabel }}</x-primary-button>
+<div class="mt-6 flex flex-col-reverse gap-3 border-t border-slate-100 pt-5 sm:flex-row sm:items-center sm:justify-between">
+    <a href="{{ route('admin.absensi.index') }}" class="btn-secondary w-full sm:w-auto">Kembali</a>
+    <x-primary-button class="w-full sm:w-auto">{{ $submitLabel }}</x-primary-button>
 </div>

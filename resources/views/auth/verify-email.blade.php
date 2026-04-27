@@ -9,7 +9,7 @@
         </div>
 
         @if (session('status') == 'verification-link-sent')
-            <x-auth-session-status class="mb-5" :status="__('A new verification link has been sent to the email address you provided during registration.')" />
+            <x-auth-session-status class="mb-5" :status="'Link verifikasi telah dikirim ke email Anda'" />
         @endif
 
         <div class="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -17,7 +17,7 @@
                 @csrf
 
                 <x-primary-button>
-                    Kirim Ulang Verifikasi
+                    Kirim ulang verifikasi email
                 </x-primary-button>
             </form>
 
