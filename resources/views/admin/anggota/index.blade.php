@@ -8,7 +8,7 @@
 
     <div class="space-y-6">
         <section class="section-card">
-            <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+            <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                 <div>
                     <h3 class="font-display text-2xl font-semibold text-slate-900">Daftar Anggota</h3>
                     <p class="mt-2 text-sm text-slate-500">
@@ -16,9 +16,14 @@
                     </p>
                 </div>
 
-                <!-- FIXED AREA -->
-                <div class="flex w-full flex-col gap-3 lg:w-auto lg:flex-row lg:flex-wrap lg:items-end">
-                    <form method="POST" action="{{ route('admin.anggota.import') }}" enctype="multipart/form-data" class="flex w-full flex-col gap-3 sm:flex-row sm:items-end lg:w-auto" data-loading-form>
+                <div class="flex w-full flex-col md:flex-row md:items-center md:justify-between gap-3 md:w-auto">
+                    <form
+                        method="POST"
+                        action="{{ route('admin.anggota.import') }}"
+                        enctype="multipart/form-data"
+                        class="flex flex-col gap-3 md:flex-row md:items-center"
+                        data-loading-form
+                    >
                         @csrf
 
                         <input
@@ -26,7 +31,7 @@
                             name="file"
                             accept=".xlsx,.xls,.csv"
                             required
-                            class="form-control mt-0 w-full sm:max-w-xs"
+                            class="file-control w-full md:w-[18rem]"
                         >
 
                         <button type="submit" class="btn-secondary w-full md:w-auto" data-loading-label="Mengimpor...">
@@ -87,7 +92,7 @@
                                 <td>{{ $item->role_detail ?? '-' }}</td>
                                 <td>{{ $item->email }}</td>
                                 <td class="whitespace-nowrap align-middle">
-                                        <div class="flex flex-col gap-2 sm:flex-row sm:items-center">
+                                        <div class="flex items-center justify-center gap-2 flex-col sm:flex-row">
                                             <a href="{{ route('admin.anggota.edit', $item) }}"
                                             class="btn-secondary w-full sm:w-auto">
                                                 Edit
@@ -101,7 +106,7 @@
                                                 @method('DELETE')
 
                                                 <button type="submit"
-                                                        class="btn-danger w-full sm:w-auto"
+                                                class="btn-danger w-full sm:w-auto"
                                                         data-loading-label="Menghapus...">
                                                     Hapus
                                                 </button>

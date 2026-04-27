@@ -8,7 +8,7 @@
 
     <div class="space-y-6">
         <section class="section-card">
-            <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+            <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                 <div>
                     <h3 class="font-display text-2xl font-semibold text-slate-900">Daftar Admin</h3>
                     <p class="mt-2 text-sm text-slate-500">Hanya super admin yang dapat membuat, mengubah, dan menghapus admin.</p>
@@ -52,7 +52,7 @@
                                 </td>
                                 <td>{{ $item->created_at->format('d M Y') }}</td>
                                 <td class="whitespace-nowrap align-middle">
-                                    <div class="flex flex-col gap-2 sm:flex-row sm:items-center">
+                                    <div class="flex items-center justify-center gap-2 flex-col sm:flex-row">
                                         <a href="{{ route('admin.admins.edit', $item) }}" class="btn-secondary w-full sm:w-auto">Edit</a>
                                         <form method="POST" action="{{ route('admin.admins.destroy', $item) }}" onsubmit="return confirm('Hapus admin ini?')" data-loading-form>
                                             @csrf
