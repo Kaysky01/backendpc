@@ -78,8 +78,8 @@
             $chartLabels = [];
             $chartData = [];
 
-            // Mengambil data anggota dan persentase kehadirannya, kemudian urutkan dari persentase tertinggi
-            $sortedSummary = collect($report['summary'])->sortByDesc('persentase')->take(15); // Ambil top 15 agar grafik tidak terlalu padat
+            // Mengambil data anggota dan persentase kehadirannya
+            $sortedSummary = collect($report['summary'])->sortByDesc('persentase');
 
             foreach ($sortedSummary as $item) {
                 // Potong nama jika terlalu panjang
@@ -88,8 +88,12 @@
                 $chartData[] = $item['persentase'];
             }
 
+            // Menghitung lebar ideal berdasarkan jumlah data agar nama tidak bertumpuk
+            $dataCount = count($chartLabels);
+            $chartWidth = max(700, $dataCount * 30); // Minimal 700px, atau bertambah agar batang tidak berdesakan
+
             $chartConfig = [
-                'type' => 'bar',
+                'type' => 'bar', // Dikembalikan ke bar vertikal
                 'data' => [
                     'labels' => $chartLabels,
                     'datasets' => [
@@ -120,16 +124,25 @@
                             [
                                 'ticks' => [
                                     'autoSkip' => false,
-                                    'maxRotation' => 45,
-                                    'minRotation' => 45
+                                    'maxRotation' => 90, // Teks vertikal penuh agar menghemat ruang horizontal
+                                    'minRotation' => 90,
+                                    'fontSize' => 10
+                                ],
+                                // Pastikan sumbu X selalu tampil meskipun datanya 0
+                                'gridLines' => [
+                                    'display' => true,
+                                    'drawOnChartArea' => false
                                 ]
                             ]
                         ]
+                    ],
+                    'legend' => [
+                        'display' => false
                     ]
                 ]
             ];
 
-            $chartUrl = 'https://quickchart.io/chart?c=' . urlencode(json_encode($chartConfig)) . '&w=700&h=350&format=png';
+            $chartUrl = 'https://quickchart.io/chart?c=' . urlencode(json_encode($chartConfig)) . '&w=' . $chartWidth . '&h=350&format=png';
             $chartImage = base64_encode(file_get_contents($chartUrl));
         @endphp
 
