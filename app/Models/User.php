@@ -46,6 +46,14 @@ class User extends Authenticatable implements MustVerifyEmail
     ];
 
     /**
+     * Pastikan name selalu dalam huruf besar (UPPERCASE).
+     */
+    public function setNameAttribute(string $value): void
+    {
+        $this->attributes['name'] = strtoupper($value);
+    }
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>

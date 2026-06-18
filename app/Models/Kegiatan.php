@@ -27,6 +27,14 @@ class Kegiatan extends Model
     ];
 
     /**
+     * Pastikan nama_kegiatan selalu dalam huruf besar (UPPERCASE).
+     */
+    public function setNamaKegiatanAttribute(string $value): void
+    {
+        $this->attributes['nama_kegiatan'] = strtoupper($value);
+    }
+
+    /**
      * @return array<string, string>
      */
     protected function casts(): array

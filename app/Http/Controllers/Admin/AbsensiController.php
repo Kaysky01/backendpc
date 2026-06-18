@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Absensi;
+use App\Models\ImportHistory;
 use App\Models\Kegiatan;
 use App\Models\User;
 use App\Services\AttendanceStatusService;
@@ -52,6 +53,7 @@ class AbsensiController extends Controller
                 ->orderBy('divisi')
                 ->pluck('divisi'),
             'filters' => $filters,
+            'importHistories' => ImportHistory::with('user')->latest()->paginate(10),
         ]);
     }
 

@@ -77,6 +77,56 @@
             <p class="mt-3 text-xs text-slate-500">Format import: `nama_kegiatan | tanggal | lokasi | nama_user | email | status | waktu_absen`.</p>
         </section>
 
+        {{-- Riwayat Import --}}
+        <section class="section-card">
+            <div>
+                <h3 class="font-display text-2xl font-semibold text-slate-900">Riwayat Import</h3>
+                <p class="mt-2 text-sm text-slate-500">Daftar import Excel yang sudah dilakukan. Klik Rollback untuk membatalkan data dari import tertentu.</p>
+            </div>
+
+            <div class="mt-6 overflow-x-auto">
+                <table class="table-base">
+                    <thead>
+                        <tr>
+                            <th>Waktu</th>
+                            <th>File</th>
+                            <th>Imported</th>
+                            <th>Skipped</th>
+                            <th>Oleh</th>
+                            <th class="w-32 text-center">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($importHistories as $history)
+                            <tr>
+                                <td>{{ $history->created_at->format('d M Y H:i:s') }}</td>
+                                <td class="font-semibold text-slate-900">{{ $history->file_name }}</td>
+                                <td><span class="badge badge-success">{{ $history->imported_count }}</span></td>
+                                <td><span class="badge badge-warning">{{ $history->skipped_count }}</span></td>
+                                <td>{{ $history->user?->name ?? '-' }}</td>
+                                <td class="whitespace-nowrap align-middle text-center">
+                                    @if ($history->record_ids && count($history->record_ids) > 0)
+                                        <form method="POST" action="{{ route('admin.absensi.import.rollback', $history) }}" onsubmit="return confirm('Batalkan import ini? {{ $history->imported_count }} data absensi dari file ini akan dihapus permanen.')" data-loading-form>
+                                            @csrf
+                                            <button type="submit" class="btn-danger h-10 px-4" data-loading-label="Merollback...">Rollback</button>
+                                        </form>
+                                    @else
+                                        <span class="text-sm text-slate-400">-</span>
+                                    @endif
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="6" class="text-center text-slate-500">Belum ada riwayat import.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+
+            {{ $importHistories->links() }}
+        </section>
+
         <section class="table-shell">
             <div class="overflow-x-auto">
                 <table class="table-base">

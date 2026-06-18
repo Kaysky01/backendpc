@@ -64,6 +64,7 @@ Route::prefix('admin')
         Route::get('absensi/create', [AdminAbsensiController::class, 'create'])->name('absensi.create');
         Route::post('absensi', [AdminAbsensiController::class, 'store'])->name('absensi.store');
         Route::post('absensi/import', [ImportController::class, 'importAbsensi'])->name('absensi.import');
+        Route::post('absensi/import/{importHistory}/rollback', [ImportController::class, 'rollback'])->name('absensi.import.rollback');
         Route::get('absensi/{absensi}/edit', [AdminAbsensiController::class, 'edit'])->name('absensi.edit');
         Route::put('absensi/{absensi}', [AdminAbsensiController::class, 'update'])->name('absensi.update');
 
