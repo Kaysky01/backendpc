@@ -7,17 +7,17 @@
 
     <div class="space-y-6">
         <section class="section-card">
-            <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                 <div>
                     <h3 class="font-display text-2xl font-semibold text-slate-900">Filter Kehadiran</h3>
                     <p class="mt-2 text-sm text-slate-500">Pantau dan koreksi absensi manual bila diperlukan.</p>
                 </div>
-                <div class="flex w-full flex-col md:flex-row md:items-center md:justify-between gap-3 md:w-auto">
+                <div class="flex flex-col gap-3 lg:flex-row lg:items-center">
                     <form
                         method="POST"
                         action="{{ route('admin.absensi.import') }}"
                         enctype="multipart/form-data"
-                        class="flex flex-col gap-3 md:flex-row md:items-center"
+                        class="flex flex-col items-stretch gap-2 sm:flex-row sm:items-center"
                         data-loading-form
                     >
                         @csrf
@@ -25,21 +25,21 @@
                         <input
                             type="file"
                             name="file"
-                            class="file-control w-full md:w-[18rem]"
+                            class="file-control h-10 w-full sm:max-w-xs"
                             accept=".xlsx,.xls,.csv"
                             required
                         >
 
                         <button
                             type="submit"
-                            class="btn-secondary w-full md:w-auto whitespace-nowrap"
+                            class="btn-secondary h-10 px-4 whitespace-nowrap"
                             data-loading-label="Mengimpor..."
                         >
                             Import Absensi
                         </button>
                     </form>
 
-                    <a href="{{ route('admin.absensi.create') }}" class="btn-primary w-full md:w-auto whitespace-nowrap">
+                    <a href="{{ route('admin.absensi.create') }}" class="btn-primary h-10 px-4 whitespace-nowrap">
                         Tambah Absensi Manual
                     </a>
                 </div>
@@ -72,7 +72,7 @@
                 </select>
 
                 <input type="date" name="tanggal" value="{{ $filters['tanggal'] }}" class="form-control mt-0">
-                <button type="submit" class="btn-secondary w-full md:w-auto">Terapkan Filter</button>
+                <button type="submit" class="btn-secondary h-10 px-4">Terapkan Filter</button>
             </form>
             <p class="mt-3 text-xs text-slate-500">Format import: `nama_kegiatan | tanggal | lokasi | nama_user | email | status | waktu_absen`.</p>
         </section>
@@ -114,7 +114,7 @@
                                 <td>{{ $item->waktu_absen->format('d M Y H:i:s') }}</td>
                                 <td class="whitespace-nowrap align-middle text-center">
                                     <div class="flex items-center justify-center">
-                                        <a href="{{ route('admin.absensi.edit', $item) }}" class="btn-secondary w-full sm:w-auto">Edit</a>
+                                        <a href="{{ route('admin.absensi.edit', $item) }}" class="btn-secondary h-10 px-4">Edit</a>
                                     </div>
                                 </td>
                             </tr>

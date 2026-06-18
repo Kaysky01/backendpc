@@ -8,7 +8,7 @@
 
     <div class="space-y-6">
         <section class="section-card">
-            <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                 <div>
                     <h3 class="font-display text-2xl font-semibold text-slate-900">Daftar Anggota</h3>
                     <p class="mt-2 text-sm text-slate-500">
@@ -16,12 +16,12 @@
                     </p>
                 </div>
 
-                <div class="flex w-full flex-col md:flex-row md:items-center md:justify-between gap-3 md:w-auto">
+                <div class="flex flex-wrap items-end gap-3">
                     <form
                         method="POST"
                         action="{{ route('admin.anggota.import') }}"
                         enctype="multipart/form-data"
-                        class="flex flex-col gap-3 md:flex-row md:items-center"
+                        class="flex items-end gap-2"
                         data-loading-form
                     >
                         @csrf
@@ -31,15 +31,15 @@
                             name="file"
                             accept=".xlsx,.xls,.csv"
                             required
-                            class="file-control w-full md:w-[18rem]"
+                            class="file-control h-10 max-w-xs"
                         >
 
-                        <button type="submit" class="btn-secondary w-full md:w-auto" data-loading-label="Mengimpor...">
+                        <button type="submit" class="btn-secondary h-10 px-4" data-loading-label="Mengimpor...">
                             Import
                         </button>
                     </form>
 
-                    <a href="{{ route('admin.anggota.create') }}" class="btn-primary w-full md:w-auto">
+                    <a href="{{ route('admin.anggota.create') }}" class="btn-primary h-10 px-4 flex items-center">
                         Tambah Anggota
                     </a>
                 </div>
@@ -53,7 +53,7 @@
                     class="form-control mt-0"
                     placeholder="Cari nama, email, NPM, prodi, angkatan, divisi, atau role detail"
                 >
-                <button type="submit" class="btn-secondary w-full md:w-auto">Filter</button>
+                <button type="submit" class="btn-secondary h-10 px-4">Filter</button>
             </form>
 
             <p class="mt-3 text-xs text-slate-500">
@@ -92,9 +92,9 @@
                                 <td>{{ $item->role_detail ?? '-' }}</td>
                                 <td>{{ $item->email }}</td>
                                 <td class="whitespace-nowrap align-middle">
-                                        <div class="flex items-center justify-center gap-2 flex-col sm:flex-row">
+                                        <div class="flex items-center justify-center gap-2">
                                             <a href="{{ route('admin.anggota.edit', $item) }}"
-                                            class="btn-secondary w-full sm:w-auto">
+                                            class="btn-secondary h-10 px-4">
                                                 Edit
                                             </a>
 
@@ -106,7 +106,7 @@
                                                 @method('DELETE')
 
                                                 <button type="submit"
-                                                class="btn-danger w-full sm:w-auto"
+                                                        class="btn-danger h-10 px-4"
                                                         data-loading-label="Menghapus...">
                                                     Hapus
                                                 </button>

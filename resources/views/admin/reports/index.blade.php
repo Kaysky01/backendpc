@@ -1,7 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
         <div>
-            <p class="text-sm font-medium text-slate-500">Admin Panel</p>
             <h2 class="font-display text-xl font-semibold text-slate-900">Rekap Absensi</h2>
         </div>
     </x-slot>
@@ -86,50 +85,6 @@
             </div>
         </section>
 
-        <section class="table-shell">
-            <div class="border-b border-slate-100 px-4 py-4 sm:px-6 sm:py-5">
-                <h3 class="font-display text-2xl font-semibold text-slate-900">Daftar Absensi Tercatat</h3>
-            </div>
-            <div class="overflow-x-auto">
-                <table class="table-base">
-                    <thead>
-                        <tr>
-                            <th>Anggota</th>
-                            <th>Kegiatan</th>
-                            <th>Status</th>
-                            <th>Waktu Absen</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                            @forelse ($report['records'] as $item)
-                            @php
-                                $statusClass = match ($item->status) {
-                                    'hadir' => 'badge-success',
-                                    'izin' => 'badge-warning',
-                                    'tidak_ditugaskan' => 'badge-neutral',
-                                    default => 'badge-danger',
-                                };
-                            @endphp
-                            <tr>
-                                <td>
-                                    <p class="font-semibold text-slate-900">{{ $item->user->name }}</p>
-                                    <p class="mt-1 text-sm text-slate-500">{{ $item->user->anggota?->npm ?? '-' }}</p>
-                                </td>
-                                <td>
-                                    <p class="font-semibold text-slate-900">{{ $item->kegiatan->nama_kegiatan }}</p>
-                                    <p class="mt-1 text-sm text-slate-500">{{ $item->kegiatan->tanggal->format('d M Y') }}</p>
-                                </td>
-                                <td><span class="badge {{ $statusClass }}">{{ str($item->status)->replace('_', ' ')->title() }}</span></td>
-                                <td>{{ $item->waktu_absen->format('d M Y H:i:s') }}</td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="4" class="text-center text-slate-500">Belum ada record absensi pada periode ini.</td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-        </section>
+
     </div>
 </x-app-layout>

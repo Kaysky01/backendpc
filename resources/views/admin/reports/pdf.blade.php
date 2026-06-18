@@ -74,6 +74,69 @@
             <p>Rekap absensi {{ $period }} bulan terakhir • Digenerate {{ $generatedAt->format('d M Y H:i:s') }}</p>
         </div>
 
+        @php
+            $chartLabels = [];
+            $chartData = [];
+
+            // Mengambil data anggota dan persentase kehadirannya, kemudian urutkan dari persentase tertinggi
+            $sortedSummary = collect($report['summary'])->sortByDesc('persentase')->take(15); // Ambil top 15 agar grafik tidak terlalu padat
+
+            foreach ($sortedSummary as $item) {
+                // Potong nama jika terlalu panjang
+                $name = $item['user']->name;
+                $chartLabels[] = strlen($name) > 15 ? substr($name, 0, 15) . '...' : $name;
+                $chartData[] = $item['persentase'];
+            }
+
+            $chartConfig = [
+                'type' => 'bar',
+                'data' => [
+                    'labels' => $chartLabels,
+                    'datasets' => [
+                        [
+                            'label' => 'Persentase Kehadiran (%)',
+                            'data' => $chartData,
+                            'backgroundColor' => 'rgba(54, 162, 235, 0.7)',
+                            'borderColor' => 'rgb(54, 162, 235)',
+                            'borderWidth' => 1
+                        ]
+                    ]
+                ],
+                'options' => [
+                    'title' => [
+                        'display' => true,
+                        'text' => 'Grafik Persentase Kehadiran Anggota'
+                    ],
+                    'scales' => [
+                        'yAxes' => [
+                            [
+                                'ticks' => [
+                                    'beginAtZero' => true,
+                                    'max' => 100
+                                ]
+                            ]
+                        ],
+                        'xAxes' => [
+                            [
+                                'ticks' => [
+                                    'autoSkip' => false,
+                                    'maxRotation' => 45,
+                                    'minRotation' => 45
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ];
+
+            $chartUrl = 'https://quickchart.io/chart?c=' . urlencode(json_encode($chartConfig)) . '&w=700&h=350&format=png';
+            $chartImage = base64_encode(file_get_contents($chartUrl));
+        @endphp
+
+        <div style="text-align: center; margin-bottom: 20px;">
+            <img src="data:image/png;base64,{{ $chartImage }}" alt="Grafik Kehadiran Anggota" style="max-width: 100%; height: auto;">
+        </div>
+
         <table class="summary-grid">
             <tr>
                 <td>Total Anggota<strong>{{ $report['totals']['total_anggota'] }}</strong></td>
@@ -113,30 +176,7 @@
             </tbody>
         </table>
 
-        <h2>Daftar Absensi Tercatat</h2>
-        <table class="data">
-            <thead>
-                <tr>
-                    <th>Nama</th>
-                    <th>Kegiatan</th>
-                    <th>Status</th>
-                    <th>Waktu Absen</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse ($report['records'] as $item)
-                    <tr>
-                        <td>{{ $item->user->name }}</td>
-                        <td>{{ $item->kegiatan->nama_kegiatan }} ({{ $item->kegiatan->tanggal->format('d M Y') }})</td>
-                        <td>{{ str($item->status)->replace('_', ' ')->title() }}</td>
-                        <td>{{ $item->waktu_absen->format('d M Y H:i:s') }}</td>
-                    </tr>
-                @empty
-                    <tr>
-                        <td colspan="4">Belum ada record absensi pada periode ini.</td>
-                    </tr>
-                @endforelse
-            </tbody>
+
         </table>
     </body>
 </html>

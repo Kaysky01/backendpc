@@ -149,6 +149,7 @@ class AttendanceAnalyticsService
             'kegiatan' => $kegiatan,
             'records' => $records,
             'summary' => $summary,
+            'chart_data' => $this->monthlyAttendanceChart($months),
             'totals' => [
                 'total_anggota' => $anggota->count(),
                 'total_kegiatan' => $kegiatan->count(),

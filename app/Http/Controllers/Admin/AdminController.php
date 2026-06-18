@@ -57,6 +57,7 @@ class AdminController extends Controller
         return redirect()
             ->route('admin.admins.index')
             ->with('success', 'Admin baru berhasil ditambahkan.');
+            
     }
 
     public function edit(User $user): View
