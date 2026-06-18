@@ -10,6 +10,7 @@
             ['label' => 'Kode Absensi', 'route' => 'admin.kode-absensi.index', 'pattern' => 'admin.kode-absensi.*', 'hint' => 'Kode aktif', 'icon' => 'key'],
             ['label' => 'Monitoring', 'route' => 'admin.absensi.index', 'pattern' => 'admin.absensi.*', 'hint' => 'Data hadir', 'icon' => 'clipboard'],
             ['label' => 'Rekap PDF', 'route' => 'admin.reports.index', 'pattern' => 'admin.reports.*', 'hint' => 'Laporan', 'icon' => 'document'],
+            ['label' => 'Riwayat Aktivitas', 'route' => 'admin.activity-log.index', 'pattern' => 'admin.activity-log.*', 'hint' => 'Semua log', 'icon' => 'clock'],
         ]
         : [
             ['label' => 'Dashboard', 'route' => 'anggota.dashboard', 'pattern' => 'anggota.dashboard', 'hint' => 'Ringkasan', 'icon' => 'home'],
