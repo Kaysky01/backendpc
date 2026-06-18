@@ -51,7 +51,24 @@
     </nav>
 
 
-    <p class="mt-auto border-dashed text-center text-xs text-slate-400">
+    <div class="mt-auto border-t border-gray-200 pt-4">
+        <form method="POST" action="{{ route('logout') }}">
+            @csrf
+            <button type="submit" class="sidebar-link w-full text-red-500 hover:bg-red-50 hover:text-red-600">
+                <span class="flex items-center gap-3">
+                    <span class="sidebar-icon">
+                        <x-icon name="logout" class="h-5 w-5" />
+                    </span>
+                    <span>
+                        <span class="block">Logout</span>
+                        <span class="mt-0.5 block text-xs font-normal text-slate-400">Keluar dari sistem</span>
+                    </span>
+                </span>
+            </button>
+        </form>
+    </div>
+
+    <p class="mt-4 border-dashed text-center text-xs text-slate-400">
         Versi 1.1  &copy; {{ date('Y') }} Nata.
         All rights reserved.
     </p>
