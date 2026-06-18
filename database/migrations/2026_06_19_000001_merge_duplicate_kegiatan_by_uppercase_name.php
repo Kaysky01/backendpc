@@ -39,10 +39,25 @@ return new class extends Migration
                 continue;
             }
 
-            // Pindahkan absensi
-            DB::table('absensi')
+            // Pindahkan absensi — handle unique constraint (user_id + kegiatan_id)
+            $absensiToMove = DB::table('absensi')
                 ->whereIn('kegiatan_id', $removeIds)
-                ->update(['kegiatan_id' => $keepId]);
+                ->get();
+
+            foreach ($absensiToMove as $absensi) {
+                $conflict = DB::table('absensi')
+                    ->where('user_id', $absensi->user_id)
+                    ->where('kegiatan_id', $keepId)
+                    ->exists();
+
+                if ($conflict) {
+                    // Sudah ada absensi untuk user ini di kegiatan tujuan → hapus yang duplikat
+                    DB::table('absensi')->where('id', $absensi->id)->delete();
+                } else {
+                    // Belum ada → pindahkan
+                    DB::table('absensi')->where('id', $absensi->id)->update(['kegiatan_id' => $keepId]);
+                }
+            }
 
             // Pindahkan kode_absensi
             DB::table('kode_absensi')
