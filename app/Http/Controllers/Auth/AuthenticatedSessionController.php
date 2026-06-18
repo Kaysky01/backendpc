@@ -28,6 +28,9 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        // Record waktu login terakhir
+        $request->user()->update(['last_login_at' => now()]);
+
         return redirect()->intended(route('dashboard', absolute: false));
     }
 
@@ -36,6 +39,9 @@ class AuthenticatedSessionController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
+        // Set last_login_at ke null saat logout (menandakan offline)
+        $request->user()?->update(['last_login_at' => null]);
+
         Auth::guard('web')->logout();
 
         $request->session()->invalidate();

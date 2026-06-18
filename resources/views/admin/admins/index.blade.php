@@ -35,6 +35,8 @@
                         <tr>
                             <th>Admin</th>
                             <th>Email</th>
+                            <th>Role</th>
+                            <th>Login Terakhir</th>
                             <th>Status</th>
                             <th>Dibuat</th>
                             <th class="w-44">Aksi</th>
@@ -42,6 +44,9 @@
                     </thead>
                     <tbody>
                         @forelse ($admins as $item)
+                            @php
+                                $isOnline = $item->last_login_at && $item->last_login_at->diffInMinutes(now()) < 5;
+                            @endphp
                             <tr>
                                 <td class="font-semibold text-slate-900">{{ $item->name }}</td>
                                 <td>{{ $item->email }}</td>
@@ -49,6 +54,26 @@
                                     <span class="badge {{ $item->is_super_admin ? 'badge-success' : 'badge-neutral' }}">
                                         {{ $item->is_super_admin ? 'Super Admin' : 'Admin' }}
                                     </span>
+                                </td>
+                                <td>
+                                    @if ($item->last_login_at)
+                                        {{ $item->last_login_at->format('d M Y H:i') }}
+                                    @else
+                                        <span class="text-slate-400">Belum pernah</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    @if ($isOnline)
+                                        <span class="inline-flex items-center gap-1.5">
+                                            <span class="h-2 w-2 rounded-full bg-green-500 animate-pulse"></span>
+                                            <span class="text-sm font-medium text-green-700">Online</span>
+                                        </span>
+                                    @else
+                                        <span class="inline-flex items-center gap-1.5">
+                                            <span class="h-2 w-2 rounded-full bg-slate-300"></span>
+                                            <span class="text-sm text-slate-500">Offline</span>
+                                        </span>
+                                    @endif
                                 </td>
                                 <td>{{ $item->created_at->format('d M Y') }}</td>
                                 <td class="whitespace-nowrap align-middle">
@@ -64,7 +89,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="text-center text-slate-500">Belum ada admin yang sesuai dengan filter.</td>
+                                <td colspan="7" class="text-center text-slate-500">Belum ada admin yang sesuai dengan filter.</td>
                             </tr>
                         @endforelse
                     </tbody>
